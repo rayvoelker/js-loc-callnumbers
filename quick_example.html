@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<style>
+.monospace {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	white-space: nowrap;
+}
+</style>
+
+<script type="text/javascript" src="locCallClass.js"></script>
+
+</head>
+
+<body>
+
+Test some stuff ...
+<br />
+
+<script type="text/javascript">
+loc = new locCallClass();
+</script>
+
+<br />
+Test if a call number is in between two other call numbers:
+<br />
+loc.isBetween("HA 203 .A218 no.54", "HB 501 .M5 A76 1990", "HA 205.E77 v.1 1976");
+<br />
+
+<script>
+
+	document.write(loc.isBetween("HA 203 .A218 no.54", "HB 501 .M5 A76 1990", "HA 205.E77 v.1 1976"));
+
+</script>
+
+<br />
+<br />
+
+Sort some call numbers:
+<br />
+loc.sortCallNumbers("HA 203 .A218 no.54", "H 1 .E77 v.1 1976", "HB 501 .M5 A76 1990");
+<br />
+<script>
+	
+	var sorted = loc.sortCallNumbers("HA 203 .A218 no.54", "H 1 .E77 v.1 1976", "HB 501 .M5 A76 1990");
+
+	for (var i=0; i<sorted.length; i++) {
+		document.write(sorted[i] + "\n<br />");
+	}
+
+</script>
+
+<br />
+<br />
+
+Get the "normalized" version of a call number (useful for comparing any two or more LoC Call Numbers):
+<br />
+loc.returnNormLcCall(" QA 76.73.J 39 H38 2011");
+<br />
+<script>
+document.write(loc.returnNormLcCall(" QA 76.73.J 39 H38 2011"));
+</script>
+<br />
+
+
+</body>
+</html>
