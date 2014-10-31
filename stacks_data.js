@@ -1,3 +1,5 @@
+//this json data will be used in our app to search for call number locations 
+
 var stacks_data = [
 	{
 		"location" : "",
