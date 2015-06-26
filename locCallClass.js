@@ -25,10 +25,19 @@ locCallClass.prototype.returnNormLcCall = function (call_number) {
 	
 	//work through the results starting at 1 (the 0 value in the array is the original input)
 	for(var i=1; i<=(result.length-1); i++) {
+		
 		if (i>1) {
 			return_string = return_string + "."
 		}
-		return_string = return_string + this.padZed(result[i]);
+		
+		//right pad all letters in the call number ... left pad all numbers
+		if( isNaN(result[i]) ) {
+			return_string = return_string + this.padZed(result[i], 'right');
+		}
+		else {
+			return_string = return_string + this.padZed(result[i], 'left');
+		}
+		
 	}		
 	return return_string;
 }
@@ -88,18 +97,26 @@ locCallClass.prototype.sortCallNumbers = function () {
 
 // class method
 // Takes :
-//	value -- part of a call number to be padded with zeros
+//	value 		-- part of a call number to be padded with zeros
+//	direction	-- The direction of the padding ... 
+//					ie "right" "A" pads as "A00000000"
+//					"left" "35" pads as "000000035"
 // Returns :
 //	value -- padded part of call number 
 // pads a string value with 0s if the string value has a length less than zero
-locCallClass.prototype.padZed = function (value) {
+locCallClass.prototype.padZed = function (value, direction) {
 	//pad value with zeros - return value will have a length of 9 
 	var pad_zeros = "";
 	if (value) {
 		for (var i=0; i<(9 - value.length); i++) {
 			pad_zeros = pad_zeros + "0";
 		}
-		return pad_zeros + value;
+		if (direction == 'right') {
+			return value + pad_zeros;
+		}
+		else {
+			return pad_zeros + value;
+		}
 	}
 	else
 		return "000000000";
