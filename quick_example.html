@@ -7,6 +7,10 @@ body {
 	font-family: 'Droid Sans Mono', monospace, Monaco;
 	white-space: nowrap;
 }
+pre {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	
+}
 </style>
 
 <script type="text/javascript" src="locCallClass.js"></script>
@@ -52,14 +56,59 @@ loc.sortCallNumbers("HA 203 .A218 no.54", "H 1 .E77 v.1 1976", "HB 501 .M5 A76 1
 </script>
 
 <br />
+<pre>
+loc.sortCallNumbers(
+	"P 12",
+	"QA 76.73.J 39 H38 2011", 
+	"PS 648. S3 B375 2001", 
+	"PS 648. S3 B75 2001",
+	"PS 3554 .R84 E5 2006", 
+	"P 1234",
+	"P 1",
+	"PPP 123"
+);
+</pre>
+<br />
+<script>
+	
+	var sorted = loc.sortCallNumbers(
+		"P 12",
+		"QA 76.73.J 39 H38 2011", 
+		"PS 648. S3 B375 2001", 
+		"PS 648. S3 B75 2001",
+		"PS 3554 .R84 E5 2006", 
+		"P 1234",
+		"P 1",
+		"PPP 123"
+	);
+
+	for (var i=0; i<sorted.length; i++) {
+		document.write(sorted[i] + "\n<br />");
+	}
+
+</script>
+
+<br />
 <br />
 
 Get the "normalized" version of a call number (useful for comparing any two or more LoC Call Numbers):
 <br />
-loc.returnNormLcCall(" QA 76.73.J 39 H38 2011");
+loc.returnNormLcCall("QA 76.73.J 39 H38 2011");
+<br />
+loc.returnNormLcCall("PS 648. S3 B375 2001");
+<br />
+loc.returnNormLcCall("PS 648. S3 B75 2001");
+<br />
+loc.returnNormLcCall("PS 3554 .R84 E5 2006");
+<br />
+loc.returnNormLcCall("PPP 123");
 <br />
 <script>
-document.write(loc.returnNormLcCall(" QA 76.73.J 39 H38 2011"));
+document.write(loc.returnNormLcCall("QA 76.73.J 39 H38 2011") + '<br />');
+document.write(loc.returnNormLcCall("PS 648. S3 B375 2001") + '<br />');
+document.write(loc.returnNormLcCall("PS 648. S3 B75 2001") + '<br />');
+document.write(loc.returnNormLcCall("PS 3554 .R84 E5 2006") + '<br />');
+document.write(loc.returnNormLcCall("PPP 123") + '<br />');
 </script>
 <br />
 
