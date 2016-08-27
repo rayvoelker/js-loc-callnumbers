@@ -58,11 +58,20 @@ locCallClass.prototype.numStacks = function () {
 
 //class method
 //Finds if a value "c" is between values "a" and "b"
+// also returns true if the "c" is equal to either "a" or "b"
 locCallClass.prototype.isBetween = function (a, b, c) {
 	
 	a_norm = this.returnNormLcCall(a);
 	b_norm = this.returnNormLcCall(b);
 	c_norm = this.returnNormLcCall(c);
+	
+	if (a_norm == c_norm) {
+		return true;
+	}
+	
+	if (b_norm == c_norm) {
+		return true;
+	}
 	
 	//first make sure that a comes before b ...
 	if (a_norm > b_norm) {
