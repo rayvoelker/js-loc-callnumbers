@@ -14,3 +14,9 @@ This is adapted from the efforts of various other developers and projects; inclu
 [https://code.google.com/p/library-callnumber-lc](https://code.google.com/p/library-callnumber-lc/wiki/Home)
 
 Unfortunately, the regular expression used in this project may have very distinct limitations in your particular institution; so please let me know if anyone out there has a more complete regular expression (or a more reliable way to parse and "normalize") that defines any and all perfectly valid Library of Congress Call Numbers.
+
+TODO:
+===
+1. Add a method, or modify the sort method to also return the previous position of each of the sorted items.
+--+ useful situtations for this might inclued inserting a single, or group of call numbers into a pre-sorted array, sorting the array, and then tracking where those items ended up in relationship to the orginal list.
+1. Add a "reshelve" method to make it simple to read a list, and see if a call number is out of position in relationship to the previos and next call numbers in the list. This method may or may not be outside of the scope of this class, but still could be very useful for implementing a more "on-the-fly" or, near-real-time shelving application.
