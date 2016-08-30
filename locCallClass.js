@@ -1,5 +1,11 @@
-//js-loc-callnumbers
-//A javascript class to normalize and perform various sorting options on Library of Congress Call Numbers within a library institution.
+// js-loc-callnumbers
+// 
+// project located at:
+// https://github.com/rayvoelker/js-loc-callnumbers
+//
+// A javascript class to normalize and perform various sorting and
+// comparison operations on Library of Congress Call Numbers within a 
+// library institution.
 
 // constructor function
 // Defines :
@@ -76,7 +82,7 @@ locCallClass.prototype.isBetween = function (a, b, c) {
 	//first make sure that a comes before b ...
 	if (a_norm > b_norm) {
 		
-		console.log ("a bigger than b");
+		//console.log ("a bigger than b");
 		return false;
 		
 	}
