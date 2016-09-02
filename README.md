@@ -17,6 +17,7 @@ Unfortunately, the regular expression used in this project may have very distinc
 
 TODO:
 ===
-1. Add a method, or modify the sort method to also return the previous position of each of the sorted items.
---+ useful situtations for this might inclued inserting a single, or group of call numbers into a pre-sorted array, sorting the array, and then tracking where those items ended up in relationship to the orginal list.
+1. Think about extending the class to a class that maintains "stacks" or "ranges" of call numbers for the purpose of finding items among the those ranges of call numbers. It could be instantiated with either a 1D or 2D array of call numbers in start / end pairs, or with a JSON object that defines the range data (the JSON object being a more easy to maintain solution for the user / system producing the data).
+1. Add a method, or modify the sort method to also return the previous position of each of the sorted items.  
+Useful situtations for this might inclued inserting a single, or group of call numbers into a pre-sorted array, sorting the array, and then tracking where those items ended up in relationship to the orginal list.
 1. Add a "reshelve" method to make it simple to read a list, and see if a call number is out of position in relationship to the previos and next call numbers in the list. This method may or may not be outside of the scope of this class, but still could be very useful for implementing a more "on-the-fly" or, near-real-time shelving application.
