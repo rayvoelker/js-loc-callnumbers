@@ -14,7 +14,7 @@ function locCallClass() {
 locCallClass.prototype.returnNormLcCall = function(call_number) {
 	var result = this.lc.exec(call_number);
 	if (!result) {
-		throw new Error('Not a Call Number');		
+		throw new Error(call_number + " Not a Call Number");		
 	}
 	
 	// track the position of what we're looking at in the callnumber 
@@ -42,9 +42,15 @@ locCallClass.prototype.returnNormLcCall = function(call_number) {
 // locCallClass.isBetween(a, b, c)
 // returns true if a <= c <= b
 locCallClass.prototype.isBetween = function (a, b, c) {
-	var a_norm = this.returnNormLcCall(a),
-		b_norm = this.returnNormLcCall(b),
-		c_norm = this.returnNormLcCall(c);
+	try {
+		var a_norm = this.returnNormLcCall(a),
+			b_norm = this.returnNormLcCall(b),
+			c_norm = this.returnNormLcCall(c);
+	}
+	
+	catch (err) {
+		// console.log("error")
+	}
 	
 	if ( (a_norm <= c_norm) && (c_norm <= b_norm) ) {
 		return true;
@@ -63,7 +69,12 @@ locCallClass.prototype.sortCallNumbers = function () {
 		
 	for (var i=0; i<arguments.length; i++) {
 		values[i]=[];
-		values[i][0] = this.returnNormLcCall(arguments[i]);
+		try {
+			values[i][0] = this.returnNormLcCall(arguments[i]);
+		}
+		catch(err) {
+			// console.log('error');
+		}
 		values[i][1] = arguments[i];
 	}
 	
