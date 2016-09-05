@@ -39,64 +39,48 @@ locCallClass.prototype.returnNormLcCall = function(call_number) {
 	return return_string;
 }
 
-// locCallClass.isBetween(a, b, c)
-// returns true if a <= c <= b
-locCallClass.prototype.isBetween = function (a, b, c) {
+// locCallClass.localeCompare(b,a)
+// replicates functionality of the normal compare function 
+// so that it may be used in external sorting operations:
+// 
+// A negative number if the reference string (a) occurs before the 
+// given string (b); 
+// positive if the reference string (a) occurs after 
+// the compare string (b); 
+// 0 if they are equivalent.
+locCallClass.prototype.localeCompare = function (a, b) {
 	try {
 		var a_norm = this.returnNormLcCall(a),
-			b_norm = this.returnNormLcCall(b),
-			c_norm = this.returnNormLcCall(c);
+			b_norm = this.returnNormLcCall(b);
+						
+			return ( a_norm < b_norm ? -1 : (a_norm > b_norm ? 1 : 0) );
 	}
-	
 	catch (err) {
 		// console.log("error")
-	}
-	
-	if ( (a_norm <= c_norm) && (c_norm <= b_norm) ) {
-		return true;
-	}
-	
-	else {
-		return false;
 	}
 }
 
 // locCallClass.sortCallNumbers()
-// takes a variable list of call numbers as arguments, and returns 
-// a sorted array of call numbers in their original format
-locCallClass.prototype.sortCallNumbers = function () {
-	var values = [];
-		
-	for (var i=0; i<arguments.length; i++) {
-		values[i]=[];
-		try {
-			values[i][0] = this.returnNormLcCall(arguments[i]);
-		}
-		catch(err) {
-			// console.log('error');
-		}
-		values[i][1] = arguments[i];
-	}
+// takes an array of call numbers and returns a sorted array of call 
+// numbers in their original format.
+// Using something like the following works to sort as well:
+// var loc = new locCallClass();
+// var sorted_array = loc.unsorted_callnumber_array.sort(function(a,b) {return loc.localeCompare(a,b)});
+locCallClass.prototype.sortCallNumbers = function (callnumbers) {
+	// also bind the scope of this to the sort function to be able to call
+	// this.localeCompare
+	var sorted = callnumbers.sort(function (a,b) {
+		return this.localeCompare(a,b);
+	}.bind(this));
 	
-	//sort the 2d array on the [0][] set of values
-	values.sort( function (a,b) {
-		if (a[0] > b[0]) {
-			return 1;
-		}
-		
-		if (a[0] < b[0]) {
-			return -1;
-		}
-		
-		return 0;
-	});
-	
-	var return_array = [];
-	for (var i=0; i<values.length; i++) {
-		return_array[i] = values[i][1];
-	}
-	
-	return return_array;
+	return sorted;
+}
+
+// locCallClass.isBetween(a,b,c)
+// returns true if a <= c <= b
+locCallClass.prototype.isBetween = function (a,b,c) {
+	//this.localeCompare(a, b) <= 0 if in sort order	
+	return ( (this.localeCompare(a,c) <= 0 && this.localeCompare(c,b) <=0) ? true : false );
 }
 
 // locCallClass.padZed()
