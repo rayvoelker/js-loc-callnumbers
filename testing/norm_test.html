@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="./callnumbers.js"></script>
+<script type="text/javascript" src="./left-pad.js"></script>
+<style>
+body {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	white-space: nowrap;
+}
+pre {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	
+}
+</style>
+</head>
+
+<body>
+
+<h3>testing</h3>
+
+issues
+<br />
+22
+numbers+letter groupings should be seperated by spaces?
+
+<br />
+28, 40, 47, 70, 9974
+letters+number groups should be seperated by spaces?
+
+<br />
+34
+remove trailing spaces?
+
+<br />
+48
+if only the prestamp remains, return only that?
+
+<script>
+
+// this is to break up the call number into groups
+const lc = /([A-Z]{1,3})\s*(\d{1,4})(\.\d+)*(.+)*/ig 
+const punctuation  = /[.,\/#!$%\^&\*;:{}=\-_`~()]/g
+
+for(var i=0; i<callnumbers.length; i++) {
+	// these will be the original call number, the normalized, and the 
+	// test grouping of the call number, broken up into sections
+	let orig, norm, local_norm, test;
+	
+	let temp = callnumbers[i].split("\t");
+	
+	if(temp[0] != ""){
+		orig = temp[0];
+	}
+	
+	if(temp[1] != ""){
+		norm = temp[1];
+	}
+	
+	// start the normalization 
+	
+	// step 1. alphabetic characters are set to lowercase 
+	
+	// step 2. remove anything that is considered a "pre-stamp" from 
+	// the callnumber
+	
+	try{
+		test = lc.exec(orig.toLowerCase());
+	}
+	catch (e){
+		console.log('undefined call number ' + e);
+	}
+	
+	// step 3. identify the "beginning" of the call number
+	
+	// step 3 (ii. a. using seven character positions... place the 
+	// letter portion into positions 1 through 3, and then the number 
+	// portion into positions 4 through 7, right justifying, leaving 
+	// spaces in the unoccupied positions. 
+	
+	try {
+		if(typeof test[1] !== 'undefined'){
+			local_norm = test[1];
+		}
+		
+		// right justify the number portion
+		local_norm += leftPad(test[2],7-test[1].length);
+		
+		// append the decimal, if there is one
+		if(typeof test[3] !== 'undefined'){
+			local_norm += test[3];
+		}
+		
+		// normalize the rest of the call number
+		if (typeof test[4] !== 'undefined'){
+			
+			//step 4. i. convert any punctuation to spaces
+			//setp 4. remove instances of multiple spaces, leaving only one
+			local_norm += test[4].replace(punctuation, " ").replace(/\s{2,}/g," ");
+		}
+		
+		
+	} //end try
+	
+	catch (e){
+		console.log(' no test ');
+	}
+		
+	console.log("test#       " + i);
+	console.log("orig:       " + orig);
+	console.log("norm:       " + norm);
+	console.log("local_norm: " + local_norm);
+	if(test) {
+		console.log("test.length: " + test.length);
+	}
+	else {
+		console.log("TEST FAILED");
+	}
+	
+	if (local_norm !== norm){
+	console.log("                                     NORMS NOT EQUAL");
+	}
+	
+	console.log(test);	
+	console.log("");
+	
+	// reset the lastIndex so the next regex exec doesn't fail
+	lc.lastIndex = 0;
+}
+
+</script>
+
+</body>
+</html>
