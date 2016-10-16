@@ -1,10 +1,12 @@
 ILS style call number normalization
----
+===
 
 Purpose
-===
+---
 This method should create normalized forms of library of congress call numbers that are efficiently stored (in a database, spreadsheet, flat file, etc.), as well as constantly identify and parse call numbers into their normalized forms.
 
+Method Description
+---
 1. alphabetic characters are set to lowercase
 1. remove anything that is considered a "pre-stamp" from the callnumber
 1. identify the "beginning" of the call number
