@@ -1,4 +1,5 @@
 ILS style call number normalization
+---
 
 1. alphabetic characters are set to lowercase
 1. remove anything that is considered a "pre-stamp" from the callnumber
