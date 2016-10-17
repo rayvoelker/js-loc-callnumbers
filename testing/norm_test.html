@@ -25,15 +25,15 @@ const lett_num_group = /([A-Z]{1,}\d{1,})/i
 const num_letter_groupings = /(\d{1,})([A-Z]{1,})/i
 
 // normalize "v 1" types of matches
-const v_dot = /(v\s)(\d{1,})/i
+const v_dot = /(v\s)([0-9]{1,})/i
 
 // normalize "no 1" types of matches
-const no_dot = /(no\s)(\d{1,})/i
+const no_dot = /(no\s)([0-9]{1,})/i
 
 //pad "v. " and "no. "
 function vol_pad(match, vol_string, num_string, offset, string) {
 	// padding out number portion to 5 places
-	return vol_string + leftPad(num_string, (5 - num_string.length) );
+	return vol_string.trim() + leftPad(num_string, 5);
 }
 
 function normalize(callnumber_string) {
