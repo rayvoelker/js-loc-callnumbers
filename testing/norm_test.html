@@ -61,8 +61,14 @@ function normalize(callnumber_string) {
 		console.log("test.length: " + test.length);
 	}
 	else {
-		console.log("TEST FAILED");
-		return local_norm;
+		// input is not LC, return lower case, trimmed input string, 
+		// with certain characters removed
+		
+		console.log("not lc");
+		return callnumber_string
+			.toLowerCase()
+			.trim()
+			.replace(/\/{1,}|-{1,}/gi, " "); //replaces "/" and "-" with spaces
 	}
 	
 	// step 3. identify the "beginning" of the call number
@@ -77,7 +83,8 @@ function normalize(callnumber_string) {
 			local_norm = test[1];
 		}
 		
-		// right justify the number portion
+		// right justify the number portion (the entire beginning 
+		// portion gets only a length of 7)
 		local_norm += leftPad(test[2],7-test[1].length);
 		
 		// append the decimal, if there is one
@@ -169,7 +176,7 @@ issues
 *breaks normalization rules
 <br />
 
-342
+342, 344
 *portion of pre-stamp incorrectly pulled into call number 
 <br />
 
@@ -191,9 +198,11 @@ issues
 </strike>
 <br />
 
+<strike>
 48
 *if only the prestamp remains, return only that?
 <br />
+</strike>
 
 <strike>
 79
@@ -201,9 +210,10 @@ no space between "beginning" of call number portion and the rest.
 </strike>
 <br />
 
-
+<strike>
 540
 no. normalization is failing?
+</strike>
 <br />
 
 <br />
