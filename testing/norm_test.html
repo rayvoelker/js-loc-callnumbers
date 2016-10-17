@@ -25,10 +25,10 @@ const lett_num_group = /([A-Z]{1,}\d{1,})/i
 const num_letter_groupings = /(\d{1,})([A-Z]{1,})/i
 
 // normalize "v 1" types of matches
-const v_dot = /(v\s)([0-9]{1,})/i
+const v_dot = /(v\s)(\d{1,})/i
 
 // normalize "no 1" types of matches
-const no_dot = /(no\s)([0-9]{1,})/i
+const no_dot = /(no\s)(\d{1,})/i
 
 //pad "v. " and "no. "
 function vol_pad(match, vol_string, num_string, offset, string) {
