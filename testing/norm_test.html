@@ -160,7 +160,7 @@ pre {
 
 <body>
 
-<h3>testing</h3>
+<h2>testing</h2>
 
 issues
 <br />
@@ -206,8 +206,17 @@ no space between "beginning" of call number portion and the rest.
 no. normalization is failing?
 <br />
 
+<br />
+<h3><u>non-matching call number normalizations</u></h3>
+
+<pre id="output"></pre>
+
+
 <script>
 
+var output = document.getElementById('output'),
+	matching_count = 0,
+	nonmatching_count = 0;
 
 for(var i=0; i<callnumbers.length; i++) {
 
@@ -217,20 +226,38 @@ for(var i=0; i<callnumbers.length; i++) {
 	let norm = values[1];
 	let local_norm = normalize(orig);
 	
-	console.log("test#       " + i);
 	if (local_norm !== norm){
-		//console.log('%c Oh my heavens! ', 'background: #222; color: #bada55');
-		console.log('%c NORMS NOT EQUAL', 'background: #222; color: #bada55');
-	}
-	console.log("orig:       " + orig);
-	console.log("norm:       " + norm);
-	console.log("local_norm: " + local_norm);
+		//console.log('%c NORMS NOT EQUAL ', 'background: #222; color: #bada55');
+		nonmatching_count++;
+		
+		let text_output = "";
 	
-	//console.log(test);	
-	console.log("");
+		//console.log("test#       " + i);
+		text_output += "test#       " + i + "\n" ;
+		
+		//console.log("orig:       " + orig);
+		text_output += "orig:       " + orig + "\n";
+		
+		//console.log("norm:       " + norm);
+		text_output += "norm:       " + norm + "\n";
+		
+		//console.log("local_norm: " + local_norm);
+		text_output += "local_norm: " + local_norm + "\n\n";
+		
+		//console.log(test);	
+		//console.log("");
+		
+		output.appendChild( document.createTextNode(text_output) );
+		
+	}
+	
+	else {
+		matching_count++;
+	}
+	
 
 
-}
+} //end for loop
 
 </script>
 
