@@ -1,0 +1,275 @@
+<!doctype html>
+<html>
+<head>
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="./callnumbers.js"></script>
+<script type="text/javascript" src="./left-pad.js"></script>
+
+<script>
+
+// this will break the call number into groups
+// group 1) letter portion
+// group 2) number portion
+// group 3) decimal portion of the number
+// group 4) the rest of the call number
+const lc = /([A-Z]{1,3})\s*(\d{1,4})(\.\d+)*(.+)*/ig
+
+// this regular expression is used to replace punctuation with spaces	
+const punctuation  = /[.,\/#!$%\^&\*;:{}=\-_`~()]/ig
+
+// this will allow us to append spaces to letter+number groups 
+const lett_num_group = /([A-Z]{1,}\d{1,})/i
+
+// seperate instances where there are numbers+letters 
+// example: "1971b" should be "1971 b"
+const num_letter_groupings = /(\d{1,})([A-Z]{1,})/i
+
+// normalize "v 1" types of matches
+const v_dot = /(v\s)(\d{1,})/i
+
+// normalize "no 1" types of matches
+const no_dot = /(no\s)(\d{1,})/i
+
+//pad "v. " and "no. "
+function vol_pad(match, vol_string, num_string, offset, string) {
+	// padding out number portion to 5 places
+	return vol_string.trim() + leftPad(num_string, 5);
+}
+
+function normalize(callnumber_string) {
+	// this is our eventual return value
+	var local_norm = '',
+		test = [];
+	
+	// start the normalization 
+	
+	// step 1. alphabetic characters are set to lowercase 
+	
+	// step 2. remove anything that is considered a "pre-stamp" from 
+	// the callnumber
+	
+	try{
+		test = lc.exec(callnumber_string.toLowerCase());
+	}
+	catch (e){
+		console.log('undefined call number ' + e);
+	}
+	
+	//debugger;
+
+	if(test) {
+		console.log("test.length: " + test.length);
+	}
+	else {
+		// input is not LC, return lower case, trimmed input string, 
+		// with certain characters removed
+		
+		console.log("not lc");
+		return callnumber_string
+			.toLowerCase()
+			.trim()
+			.replace(/\/{1,}|-{1,}/gi, " "); //replaces "/" and "-" with spaces
+	}
+	
+	// step 3. identify the "beginning" of the call number
+	
+	// step 3 (ii. a. using seven character positions... place the 
+	// letter portion into positions 1 through 3, and then the number 
+	// portion into positions 4 through 7, right justifying, leaving 
+	// spaces in the unoccupied positions. 
+	
+	try {
+		if(typeof test[1] !== 'undefined'){
+			local_norm = test[1];
+		}
+		
+		// right justify the number portion (the entire beginning 
+		// portion gets only a length of 7)
+		local_norm += leftPad(test[2],7-test[1].length);
+		
+		// append the decimal, if there is one
+		if(typeof test[3] !== 'undefined'){
+			local_norm += test[3];
+		}
+		
+		// trim whitespace from the beggining or end of the string, and 
+		//then add a single space to then end
+		/*
+		//this seems to be an issue for some reason
+		local_norm = local_norm.trim();
+		local_norm += " ";
+		*/
+		// remove any leading or trailing whitespace
+		local_norm = local_norm.trim();
+
+		// normalize the rest of the call number
+		
+		var call_number_remainder = "";
+		if (typeof test[4] !== 'undefined'){	
+			// step 4. i. convert any punctuation to spaces
+			// append letter+number groups with spaces 
+			// step 4. remove instances of multiple spaces, leaving only one
+			// remove any trailing (or starting) whitespace
+			call_number_remainder += test[4]
+				.replace(punctuation, " ")	//repalce punctuation with spaces
+				.replace(lett_num_group, "$1 ") //append spaces to letter+number groups
+				.replace(num_letter_groupings, "$1 $2") //place space between numbers and letters occuring next to eachother
+				.replace(/\s{2,}/g," "); //instances of 2 or more consecutive spaces are replaced by one
+			
+			// pad out numbers occuring after "v." and "no."
+			call_number_remainder = call_number_remainder.replace(v_dot, vol_pad);
+			v_dot.lastIndex = 0;
+			
+			call_number_remainder = call_number_remainder.replace(no_dot, vol_pad);
+			no_dot.lastIndex = 0;
+			
+			// reset the lastIndex so the next regex exec doesn't fail on next try
+			punctuation.lastIndex = 0;
+			
+		}
+		
+		// add a single space to the front of the call_number_remainder
+		call_number_remainder = call_number_remainder.trim();
+		call_number_remainder = " " + call_number_remainder;
+		
+		//append the begining of the callnumber to the remainder of the call number
+		local_norm += call_number_remainder;
+		
+		//trim spaces from the end, or the begining of the string
+		local_norm = local_norm.trim();
+		
+	} //end try
+	
+	catch (e){
+		console.log(' no test ');
+	}
+		
+	// reset the lastIndex so the next regex exec doesn't fail on next try
+	lc.lastIndex = 0;
+	
+	return local_norm;
+} // end function normalize
+
+</script>
+
+
+<style>
+body {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	white-space: nowrap;
+}
+pre {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	
+}
+</style>
+</head>
+
+<body>
+
+<h2>testing</h2>
+
+issues
+<br />
+
+411, 412
+*breaks normalization rules
+<br />
+
+342, 344
+*portion of pre-stamp incorrectly pulled into call number 
+<br />
+
+<strike>
+22, 533
+*numbers+letter groupings should be seperated by spaces?
+</strike>
+<br />
+
+<strike>
+28, 40, 47, 70, 9974
+*letters+number groups should be seperated by spaces?
+</strike>
+<br />
+
+<strike>
+34
+*remove trailing spaces?
+</strike>
+<br />
+
+<strike>
+48
+*if only the prestamp remains, return only that?
+<br />
+</strike>
+
+<strike>
+79
+no space between "beginning" of call number portion and the rest.
+</strike>
+<br />
+
+<strike>
+540
+no. normalization is failing?
+</strike>
+<br />
+
+<br />
+<h3><u>non-matching call number normalizations</u></h3>
+
+<pre id="output"></pre>
+
+
+<script>
+
+var output = document.getElementById('output'),
+	matching_count = 0,
+	nonmatching_count = 0;
+
+for(var i=0; i<callnumbers.length; i++) {
+
+	//debugger;
+	let values = callnumbers[i].split("\t");
+	let orig = values[0];
+	let norm = values[1];
+	let local_norm = normalize(orig);
+	
+	if (local_norm !== norm){
+		//console.log('%c NORMS NOT EQUAL ', 'background: #222; color: #bada55');
+		nonmatching_count++;
+		
+		let text_output = "";
+	
+		//console.log("test#       " + i);
+		text_output += "test#       " + i + "\n" ;
+		
+		//console.log("orig:       " + orig);
+		text_output += "orig:       " + orig + "\n";
+		
+		//console.log("norm:       " + norm);
+		text_output += "norm:       " + norm + "\n";
+		
+		//console.log("local_norm: " + local_norm);
+		text_output += "local_norm: " + local_norm + "\n\n";
+		
+		//console.log(test);	
+		//console.log("");
+		
+		output.appendChild( document.createTextNode(text_output) );
+		
+	}
+	
+	else {
+		matching_count++;
+	}
+	
+
+
+} //end for loop
+
+</script>
+
+</body>
+</html>

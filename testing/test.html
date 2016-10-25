@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+
+<script type="text/javascript" src="./left-pad.js"></script>
+
+<script>
+
+// this will break the call number into groups
+// group 1) letter portion
+// group 2) number portion
+// group 3) decimal portion of the number
+// group 4) the rest of the call number
+const lc = /([A-Z]{1,3})\s*(\d{1,4})(\.\d+)*(.+)*/i 
+
+// this regular expression is used to replace punctuation with spaces	
+const punctuation  = /[.,\/#!$%\^&\*;:{}=\-_`~()]/i
+
+// this will allow us to append spaces to letter+number groups 
+const lett_num_group = /([A-Z]{1,}\d{1,})/i
+
+// seperate instances where there are numbers+letters 
+// example: "1971b" should be "1971 b"
+const num_letter_groupings = /(\d{1,})([A-Z]{1,})/i
+
+// normalize "v 1" types of matches
+const v_dot = /(v\s)(\d{1,})/i
+
+//pad "v." and "no."
+function vol_pad(match, vol_string, num_string, offset, string) {
+	// padding out to 6 places, since the original space between the 
+	// character and the number is stripped out
+	return vol_string + leftPad(num_string, (6 - num_string.length) );
+}
+
+</script>
+
+
+<style>
+body {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	white-space: nowrap;
+}
+pre {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	
+}
+</style>
+</head>
+
+<body>
+
+<h3>testing</h3>
+
+<script>
+	var test1 = "qp    1 p37 v 08";
+	
+	test1 = test1.replace(v_dot, vol_pad);
+	
+</script>
+
+</body>
+</html>
