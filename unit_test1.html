@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="./locCallClass.js"></script>
+<script type="text/javascript" src="./callnumbers.js"></script>
+
+<style>
+body {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	white-space: nowrap;
+}
+pre {
+	font-family: 'Droid Sans Mono', monospace, Monaco;
+	
+}
+</style>
+</head>
+
+<body>
+
+<h2>testing</h2>
+
+issues
+<br />
+
+411, 412
+*breaks normalization rules
+<br />
+
+342, 344
+*portion of pre-stamp incorrectly pulled into call number 
+<br />
+
+<strike>
+22, 533
+*numbers+letter groupings should be seperated by spaces?
+</strike>
+<br />
+
+<strike>
+28, 40, 47, 70, 9974
+*letters+number groups should be seperated by spaces?
+</strike>
+<br />
+
+<strike>
+34
+*remove trailing spaces?
+</strike>
+<br />
+
+<strike>
+48
+*if only the prestamp remains, return only that?
+<br />
+</strike>
+
+<strike>
+79
+no space between "beginning" of call number portion and the rest.
+</strike>
+<br />
+
+<strike>
+540
+no. normalization is failing?
+</strike>
+<br />
+
+<br />
+<h3><u>non-matching call number normalizations</u></h3>
+
+<pre id="output"></pre>
+
+
+<script>
+
+var loc = new locCallClass,
+	output = document.getElementById('output'),
+	matching_count = 0,
+	nonmatching_count = 0;
+
+for(var i=0; i<callnumbers.length; i++) {
+	//debugger;
+	let values = callnumbers[i].split("\t");
+	let orig = values[0];
+	let norm = values[1];
+	let local_norm = loc.normalize(orig);
+	
+	if (local_norm !== norm){
+		//console.log('%c NORMS NOT EQUAL ', 'background: #222; color: #bada55');
+		nonmatching_count++;
+		
+		let text_output = "";
+	
+		//console.log("test#       " + i);
+		text_output += "test#       " + i + "\n" ;
+		
+		//console.log("orig:       " + orig);
+		text_output += "orig:       " + orig + "\n";
+		
+		//console.log("norm:       " + norm);
+		text_output += "norm:       " + norm + "\n";
+		
+		//console.log("local_norm: " + local_norm);
+		text_output += "local_norm: " + local_norm + "\n\n";
+		
+		//console.log(test);	
+		//console.log("");
+		
+		output.appendChild( document.createTextNode(text_output) );
+		
+	}
+	
+	else {
+		matching_count++;
+	}
+	
+
+
+} //end for loop
+
+</script>
+
+</body>
+</html>

@@ -2,42 +2,120 @@
 // A javascript class to normalize and perform various sorting options on
 // Library of Congress Call Numbers within a library institution.
 
+// constructor
 function locCallClass() {
-	// the regular expression that defines the Library of 
-	// Congress call number. Thanks to Bill Dueber's post on the subject for the regex 
-	// http://robotlibrarian.billdueber.com/2008/11/normalizing-loc-call-numbers-for-sorting/
-	this.lc = /^\s*([A-Z]{1,3})\s*(\d+(?:\s*\.\s*\d+)?)?\s*(?:\.?\s*([A-Z]+)\s*(\d+)?)?(?:\.?\s*([A-Z]+)\s*(\d+)?)?\s*(.*?)\s*$/;
+	
+	//define the regular expressions used in the normalization
+	this.lc = /([A-Z]{1,3})\s*(\d{1,4})(\.\d+)*(.+)*/ig;
+	this.punctuation  = /[.,\/#!$%\^&\*;:{}=\-_`~()]/ig;
+	this.lett_num_group = /([A-Z]{1,}\d{1,})/ig;
+	this.num_letter_groupings = /(\d{1,})([A-Z]{1,})/ig;
+	this.v_dot = /(v\s)(\d{1,})/ig;
+	this.no_dot = /(no\s)(\d{1,})/ig;
+	
+	//define and cache the padding lengths (max pad length is 9)
+	this.cache = ['', ' ', '  ', '   ', '    ', '     ', '      ', '       ', '        ', '         '];
+	
+	// alias the function name for returnNormLcCall
+	this.normalize = this.returnNormLcCall;
 }
+
 
 // locCallClass.returnNormLcCall(call_number)
 // returns a "normalized" call number
-locCallClass.prototype.returnNormLcCall = function(call_number) {
-	var result = this.lc.exec(call_number);
-	if (!result) {
-		throw new Error(call_number + " Not a Call Number");		
+locCallClass.prototype.returnNormLcCall = function(callnumber_string) {
+	// this is our eventual return value
+	var local_norm = '',
+		test = [];
+	
+	try{
+		test = this.lc.exec(callnumber_string.toLowerCase());
+	}
+	catch (e){
+		console.log('undefined call number ' + e);
 	}
 	
-	// track the position of what we're looking at in the callnumber 
-	var before_first_cutter = true;
-	var return_string = "";
+	// if input is not LC, return lower case, trimmed input string, 
+	// with certain characters removed
+	if (test === null){
+		console.log("not lc");
+		return callnumber_string
+			.toLowerCase()
+			.trim()
+			.replace(/\/{1,}|-{1,}/gi, " "); //replaces "/" and "-" with spaces
+	}
 	
-	// work through the results starting at 1 (the 0 value in the array is the original input)
-	for(var i=1; i<=(result.length-1); i++) {
-		if (i>1) {
-			return_string = return_string + "."
+	// TODO : 
+	// remove try block?	
+	try {
+		if(typeof test[1] !== 'undefined'){
+			local_norm = test[1];
 		}
 		
-		if (i>2) {
-			before_first_cutter = false;
+		local_norm += this.leftPad(test[2],7-test[1].length);
+		
+		// append the decimal, if there is one
+		if(typeof test[3] !== 'undefined'){
+			local_norm += test[3];
 		}
 		
-		return_string = return_string + this.padZed(result[i], before_first_cutter);
-	}		
+		// remove any leading or trailing whitespace
+		local_norm = local_norm.trim();
+
+		// normalize the rest of the call number
+		var call_number_remainder = "";
+		if (typeof test[4] !== 'undefined'){	
+			// step 4. i. convert any punctuation to spaces
+			// append letter+number groups with spaces 
+			// step 4. remove instances of multiple spaces, leaving only one
+			// remove any trailing (or starting) whitespace
+			call_number_remainder += test[4]
+				.replace(this.punctuation, " ")	//repalce punctuation with spaces
+				.replace(this.lett_num_group, "$1 ") //append spaces to letter+number groups
+				.replace(this.num_letter_groupings, "$1 $2") //place space between numbers and letters occuring next to eachother
+				.replace(/\s{2,}/g," "); //instances of 2 or more consecutive spaces are replaced by one
+			
+			
+			// TODO :
+			// consider removing the lastIndex for the following?
+			
+			// pad out numbers occuring after "v." and "no."
+			// note: this calls the helper function for replace "vol_pad()"
+			call_number_remainder = call_number_remainder.replace(this.v_dot, this.vol_pad.bind(this));
+			this.v_dot.lastIndex = 0;
+			
+			call_number_remainder = call_number_remainder.replace(this.no_dot, this.vol_pad.bind(this));
+			this.no_dot.lastIndex = 0;
+			
+			// reset the lastIndex so the next regex exec doesn't fail on next try
+			this.punctuation.lastIndex = 0;
+			
+		}
+		
+		// add a single space to the front of the call_number_remainder
+		call_number_remainder = call_number_remainder.trim();
+		call_number_remainder = " " + call_number_remainder;
+		
+		//append the begining of the callnumber to the remainder of the call number
+		local_norm += call_number_remainder;
+		
+		//trim spaces from the end, or the begining of the string
+		local_norm = local_norm.trim();
+		
+	} //end try
 	
-	// TODO: consider adding further checks to see if the return string 
-	// consists of 8 segments 9 characters and throw an error if not
-	return return_string;
-}
+	catch (e){
+		console.log(' no test ');
+	}
+		
+	// reset the lastIndex so the next regex exec doesn't fail on next try
+	this.lc.lastIndex = 0;
+	
+	return local_norm;
+	
+	
+} //end returnNormLcCall
+
 
 // locCallClass.localeCompare(b,a)
 // replicates functionality of the normal compare function 
@@ -83,49 +161,22 @@ locCallClass.prototype.isBetween = function (a,b,c) {
 	return ( (this.localeCompare(a,c) <= 0 && this.localeCompare(c,b) <=0) ? true : false );
 }
 
-// locCallClass.padZed()
-// returns portion of the call number padded out to enable sorting.
-locCallClass.prototype.padZed = function (value, before_first_cutter) {
-	//pad value with zeros - return value will have a length of 9 
-	// The exceptions here are going to be if the number is before the 
-	// cutter, then we should treat it as two different parts: whole 
-	// number, and decimal portion.
-
-	if(value) {
-		if(before_first_cutter && !isNaN(value) ) {
-			//this is a number before the first cutter, split it, and then
-			// pad each of the parts 
-			var int_portion = Math.floor(value).toString();
-			var dec_portion = (value % 1).toFixed(3).toString().substr(2,3);
-			var pad_zeros = "";
-			
-			for (var i=0; i<(9 - int_portion.length); i++) {
-				pad_zeros = pad_zeros + "0";
-			}
-			
-			return_value = pad_zeros + int_portion;
-			
-			var pad_zeros = "";
-			for (var i=0; i<(9 - dec_portion.length); i++) {
-				pad_zeros = pad_zeros + "0";
-			}
-			
-			return_value += "." + dec_portion + pad_zeros;
-			return return_value;
-		} // end if
-	
-		else {
-			//pad the value to the right
-			var pad_zeros = "";
-			for (var i=0; i<(9 - value.length); i++) {
-				pad_zeros = pad_zeros + "0";
-			}
-
-			return value + pad_zeros;
-		}
-	} 
-	
-	else {
-		return "000000000";
+// pad the string
+locCallClass.prototype.leftPad = function (string, pad_length) {
+	// make sure that we're treating the string like a string
+	string = string + '';
+	pad_length = pad_length - string.length;
+	// nothing to pad
+	if (pad_length <= 0) { 
+		return string;
 	}
+	
+	return this.cache[pad_length] + string;
+} // end leftPad
+
+//helper function for volume padding
+locCallClass.prototype.vol_pad = function (match, vol_string, num_string, offset, string) {
+	// padding out number portion to 5 places
+	debugger;
+	return vol_string.trim() + this.leftPad(num_string, 5);
 }
