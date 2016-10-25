@@ -38,7 +38,7 @@ locCallClass.prototype.returnNormLcCall = function(callnumber_string) {
 	// if input is not LC, return lower case, trimmed input string, 
 	// with certain characters removed
 	if (test === null){
-		console.log("not lc");
+		console.log("\"" + callnumber_string + "\"" + " not lc");
 		return callnumber_string
 			.toLowerCase()
 			.trim()
@@ -177,6 +177,5 @@ locCallClass.prototype.leftPad = function (string, pad_length) {
 //helper function for volume padding
 locCallClass.prototype.vol_pad = function (match, vol_string, num_string, offset, string) {
 	// padding out number portion to 5 places
-	debugger;
 	return vol_string.trim() + this.leftPad(num_string, 5);
 }

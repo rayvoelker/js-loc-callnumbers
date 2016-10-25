@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
 	<script type="text/javascript" src="./locCallClass.js"></script>
 	<meta charset="utf-8">
 	<title>sanity test on pre-sorted call numbers</title>
-	
+	<style>
+		body {
+			font-family: 'Droid Sans Mono', monospace, Monaco;
+			white-space: nowrap;
+		}
+		pre {
+			font-family: 'Droid Sans Mono', monospace, Monaco;
+			
+		}
+	</style>
 </head>
 
 <body style="font-family:monospace;">
@@ -38,9 +48,11 @@
 	
 	<br />
 	
+	<pre>
 	<div id="result_output">
 		
 	</div>
+	</pre>
 	
 	<script>
 		
@@ -90,6 +102,7 @@
 			for (var i=0; i<array_to_load.length; i++) {
 				call_number_input.value += array_to_load[i] + "\n";
 			}
+			call_number_input.value = call_number_input.value.trim();
 			
 		}
 			
