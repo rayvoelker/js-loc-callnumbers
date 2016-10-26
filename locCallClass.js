@@ -31,16 +31,15 @@ locCallClass.prototype.returnNormLcCall = function(callnumber_string) {
 	//~ get cataloging to fix issues with non-normalizing call numbers
 	//~ so we don't have to use this hack.
 	//~ Call numbers like this "KBG .A1" should normalize to "kbg   0 a2"
-	
 	try{
 		const exception = /(KBG)(\s*\.)(.+)*/i;
 		test = exception.exec(callnumber_string);
 		if (test != null) {
 			//debugger;
 			var new_callnumber_string = "";
-			if( test[1] !== undefined) new_callnumber_string += test[1] + "0";
-			if( test[2] !== undefined) new_callnumber_string += test[2];
-			if( test[3] !== undefined) new_callnumber_string += test[3];
+			if( typeof test[1] !== "undefined" ) new_callnumber_string += test[1] + "0";
+			if( typeof test[2] !== "undefined" ) new_callnumber_string += test[2];
+			if( typeof test[3] !== "undefined" ) new_callnumber_string += test[3];
 			test = [];
 			return this.returnNormLcCall(new_callnumber_string);
 		}
@@ -60,6 +59,7 @@ locCallClass.prototype.returnNormLcCall = function(callnumber_string) {
 	
 	// if input is not LC, return lower case, trimmed input string, 
 	// with certain characters removed
+	debugger;
 	if (test === null){
 		console.log("\"" + callnumber_string + "\"" + " not lc");
 		return callnumber_string
@@ -71,14 +71,14 @@ locCallClass.prototype.returnNormLcCall = function(callnumber_string) {
 	// TODO : 
 	// remove try block?	
 	try {
-		if(typeof test[1] !== 'undefined'){
+		if(typeof test[1] !== "undefined"){
 			local_norm = test[1];
 		}
 		
 		local_norm += this.leftPad(test[2],7-test[1].length);
 		
 		// append the decimal, if there is one
-		if(typeof test[3] !== 'undefined'){
+		if(typeof test[3] !== "undefined"){
 			local_norm += test[3];
 		}
 		
