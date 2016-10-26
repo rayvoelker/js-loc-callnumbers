@@ -59,7 +59,6 @@ locCallClass.prototype.returnNormLcCall = function(callnumber_string) {
 	
 	// if input is not LC, return lower case, trimmed input string, 
 	// with certain characters removed
-	debugger;
 	if (test === null){
 		console.log("\"" + callnumber_string + "\"" + " not lc");
 		return callnumber_string
