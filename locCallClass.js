@@ -4,7 +4,6 @@
 
 // constructor
 function locCallClass() {
-	
 	//define the regular expressions used in the normalization
 	this.lc = /([A-Z]{1,3})\s*(\d{1,4})(\.\d+)*(.+)*/ig;
 	this.punctuation  = /[.,\/#!$%\^&\*;:{}=\-_`~()]/ig;
@@ -27,6 +26,30 @@ locCallClass.prototype.returnNormLcCall = function(callnumber_string) {
 	// this is our eventual return value
 	var local_norm = '',
 		test = [];
+	
+	//~ TODO
+	//~ get cataloging to fix issues with non-normalizing call numbers
+	//~ so we don't have to use this hack.
+	//~ Call numbers like this "KBG .A1" should normalize to "kbg   0 a2"
+	
+	try{
+		const exception = /(KBG)(\s*\.)(.+)*/i;
+		test = exception.exec(callnumber_string);
+		if (test != null) {
+			//debugger;
+			var new_callnumber_string = "";
+			if( test[1] !== undefined) new_callnumber_string += test[1] + "0";
+			if( test[2] !== undefined) new_callnumber_string += test[2];
+			if( test[3] !== undefined) new_callnumber_string += test[3];
+			test = [];
+			return this.returnNormLcCall(new_callnumber_string);
+		}
+				
+	}
+	catch (e){
+		// console.log('undefined call number ' + e);
+	}
+	//~ /TODO
 	
 	try{
 		test = this.lc.exec(callnumber_string.toLowerCase());
